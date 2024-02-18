@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/vue'
 import SignUp from './SignUp.vue'
+import userEvent from '@testing-library/user-event'
 
 describe('Sign Up', () => {
   it('has Sign Up header', () => {
@@ -47,5 +48,17 @@ describe('Sign Up', () => {
   it('disable the button initially', () => {
     render(SignUp)
     expect(screen.getByRole('button', { name: 'Sign Up' })).toBeDisabled()
+  })
+
+  describe('when user set same value for password inputs', () => {
+    it('enable button', async () => {
+      const user = userEvent.setup()
+      render(SignUp)
+      const passwordInput = screen.getByLabelText('Password')
+      const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
+      await user.type(passwordInput, 'P4ssword')
+      await user.type(passwordConfirmInput, 'P4ssword')
+      expect(screen.getByRole('button', { name: 'Sign Up' })).toBeEnabled()
+    })
   })
 })
