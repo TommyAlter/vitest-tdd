@@ -12,29 +12,22 @@
 
   <div>
     <label for="password">Password</label>
-    <input id="password" type="password" @input="onChangePassword" />
+    <input id="password" type="password" v-model="password" />
   </div>
 
   <div>
     <label for="password-confirm">Password Confirmation</label>
-    <input id="password-confirm" type="password" @input="onChangePasswordConfirm" />
+    <input id="password-confirm" type="password" v-model="passwordConfirm" />
   </div>
-  <button :disabled="disabled">Sign Up</button>
+  <button :disabled="isDisabled">Sign Up</button>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const disabled = ref(true)
+import { ref, computed } from 'vue'
 const password = ref('')
 const passwordConfirm = ref('')
 
-const onChangePassword = (ev) => {
-  password.value = ev.target.value
-  disabled.value = password.value !== passwordConfirm.value
-}
-
-const onChangePasswordConfirm = (ev) => {
-  passwordConfirm.value = ev.target.value
-  disabled.value = password.value !== passwordConfirm.value
-}
+const isDisabled = computed(() =>
+  password.value || passwordConfirm.value ? password.value !== passwordConfirm.value : true
+)
 </script>
