@@ -35,6 +35,14 @@ const formState = reactive({
 const submit = () => {
   const { passwordConfirm, ...body } = formState
   axios.post('/api/v1/users', body)
+  //---> Just work with SignUp.spec.js
+  // fetch(window.location.origin + '/api/v1/users', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify(body)
+  // })
 }
 
 const isDisabled = computed(() =>
