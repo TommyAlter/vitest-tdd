@@ -30,7 +30,7 @@
           />
         </div>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="isDisabled">Sign Up</button>
+          <button class="btn btn-primary" :disabled="isDisabled || apiProgress">Sign Up</button>
         </div>
       </div>
     </form>
@@ -39,7 +39,7 @@
 
 <script setup>
 import axios from 'axios'
-import { reactive, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 const formState = reactive({
   username: '',
   email: '',
@@ -47,7 +47,10 @@ const formState = reactive({
   passwordConfirm: ''
 })
 
+const apiProgress = ref(false)
+
 const submit = () => {
+  apiProgress.value = true
   const { passwordConfirm, ...body } = formState
   axios.post('/api/v1/users', body)
   //---> Just work with SignUp.spec.js

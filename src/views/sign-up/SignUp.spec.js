@@ -62,13 +62,47 @@ describe('Sign Up', () => {
       await user.type(passwordConfirmInput, 'P4ssword')
       expect(screen.getByRole('button', { name: 'Sign Up' })).toBeEnabled()
     })
+  })
 
-    describe('when user submit form', () => {
-      it('sends username, email, password to backend', async () => {
-        let requestBody
+  describe('when user submit form', () => {
+    it('sends username, email, password to backend', async () => {
+      let requestBody
+      const server = setupServer(
+        http.post('/api/v1/users', async ({ request }) => {
+          requestBody = await request.json()
+          return HttpResponse.json({})
+        })
+      )
+      server.listen()
+
+      const user = userEvent.setup()
+      render(SignUp)
+      const usernameInput = screen.getByLabelText('Username')
+      const emailInput = screen.getByLabelText('Email')
+      const passwordInput = screen.getByLabelText('Password')
+      const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
+      await user.type(usernameInput, 'user1')
+      await user.type(emailInput, 'user1@mail.com')
+      await user.type(passwordInput, 'P4ssword')
+      await user.type(passwordConfirmInput, 'P4ssword')
+      const button = screen.getByRole('button', { name: 'Sign Up' })
+      await user.click(button)
+      await waitFor(() => {
+        expect(requestBody).toEqual({
+          username: 'user1',
+          email: 'user1@mail.com',
+          password: 'P4ssword'
+        })
+      })
+      server.close()
+    })
+
+    describe('when there is an ongoing api call', () => {
+      it('does not allow clicking the button', async () => {
+        let count = 0
         const server = setupServer(
-          http.post('/api/v1/users', async ({ request }) => {
-            requestBody = await request.json()
+          http.post('/api/v1/users', () => {
+            count += 1
             return HttpResponse.json({})
           })
         )
@@ -86,14 +120,13 @@ describe('Sign Up', () => {
         await user.type(passwordConfirmInput, 'P4ssword')
         const button = screen.getByRole('button', { name: 'Sign Up' })
         await user.click(button)
+        await user.click(button)
         await waitFor(() => {
-          expect(requestBody).toEqual({
-            username: 'user1',
-            email: 'user1@mail.com',
-            password: 'P4ssword'
-          })
+          expect(count).toBe(1)
         })
+        server.close()
       })
     })
   })
+
 })
