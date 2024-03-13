@@ -4,6 +4,45 @@ import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { HttpResponse, http } from 'msw'
 
+let requestBody
+let counter = 0
+const server = setupServer(
+  http.post('/api/v1/users', async ({ request }) => {
+    requestBody = await request.json()
+    counter += 1
+    return HttpResponse.json({})
+  })
+)
+
+beforeEach(() => {
+  counter = 0
+})
+
+beforeAll(() => server.listen())
+
+afterAll(() => server.close())
+
+const setup = async () => {
+  const user = userEvent.setup()
+  const result = render(SignUp)
+  const usernameInput = screen.getByLabelText('Username')
+  const emailInput = screen.getByLabelText('Email')
+  const passwordInput = screen.getByLabelText('Password')
+  const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
+  await user.type(usernameInput, 'user1')
+  await user.type(emailInput, 'user1@mail.com')
+  await user.type(passwordInput, 'P4ssword')
+  await user.type(passwordConfirmInput, 'P4ssword')
+  const button = screen.getByRole('button', { name: 'Sign Up' })
+  return {
+    ...result,
+    user,
+    elements: {
+      button
+    }
+  }
+}
+
 describe('Sign Up', () => {
   it('has Sign Up header', () => {
     render(SignUp)
@@ -54,38 +93,14 @@ describe('Sign Up', () => {
 
   describe('when user set same value for password inputs', () => {
     it('enable button', async () => {
-      const user = userEvent.setup()
-      render(SignUp)
-      const passwordInput = screen.getByLabelText('Password')
-      const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
-      await user.type(passwordInput, 'P4ssword')
-      await user.type(passwordConfirmInput, 'P4ssword')
-      expect(screen.getByRole('button', { name: 'Sign Up' })).toBeEnabled()
+      const { elements: { button } } = await setup()
+      expect(button).toBeEnabled()
     })
   })
 
   describe('when user submit form', () => {
     it('sends username, email, password to backend', async () => {
-      let requestBody
-      const server = setupServer(
-        http.post('/api/v1/users', async ({ request }) => {
-          requestBody = await request.json()
-          return HttpResponse.json({})
-        })
-      )
-      server.listen()
-
-      const user = userEvent.setup()
-      render(SignUp)
-      const usernameInput = screen.getByLabelText('Username')
-      const emailInput = screen.getByLabelText('Email')
-      const passwordInput = screen.getByLabelText('Password')
-      const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
-      await user.type(usernameInput, 'user1')
-      await user.type(emailInput, 'user1@mail.com')
-      await user.type(passwordInput, 'P4ssword')
-      await user.type(passwordConfirmInput, 'P4ssword')
-      const button = screen.getByRole('button', { name: 'Sign Up' })
+      const { user, elements: { button } } = await setup()
       await user.click(button)
       await waitFor(() => {
         expect(requestBody).toEqual({
@@ -94,37 +109,16 @@ describe('Sign Up', () => {
           password: 'P4ssword'
         })
       })
-      server.close()
     })
 
     describe('when there is an ongoing api call', () => {
       it('does not allow clicking the button', async () => {
-        let count = 0
-        const server = setupServer(
-          http.post('/api/v1/users', () => {
-            count += 1
-            return HttpResponse.json({})
-          })
-        )
-        server.listen()
-
-        const user = userEvent.setup()
-        render(SignUp)
-        const usernameInput = screen.getByLabelText('Username')
-        const emailInput = screen.getByLabelText('Email')
-        const passwordInput = screen.getByLabelText('Password')
-        const passwordConfirmInput = screen.getByLabelText('Password Confirmation')
-        await user.type(usernameInput, 'user1')
-        await user.type(emailInput, 'user1@mail.com')
-        await user.type(passwordInput, 'P4ssword')
-        await user.type(passwordConfirmInput, 'P4ssword')
-        const button = screen.getByRole('button', { name: 'Sign Up' })
+        const { user, elements: { button } } = await setup()
         await user.click(button)
         await user.click(button)
         await waitFor(() => {
-          expect(count).toBe(1)
+          expect(counter).toBe(1)
         })
-        server.close()
       })
     })
   })
