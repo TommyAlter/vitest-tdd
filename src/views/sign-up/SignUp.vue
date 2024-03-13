@@ -30,7 +30,10 @@
           />
         </div>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="isDisabled || apiProgress">Sign Up</button>
+          <button class="btn btn-primary" :disabled="isDisabled || apiProgress">
+            <span role="status" class="spinner-border spinner-border-sm" v-if="apiProgress"></span>
+            Sign Up
+          </button>
         </div>
       </div>
     </form>
