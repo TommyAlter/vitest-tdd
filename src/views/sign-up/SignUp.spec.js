@@ -10,7 +10,7 @@ const server = setupServer(
   http.post('/api/v1/users', async ({ request }) => {
     requestBody = await request.json()
     counter += 1
-    return HttpResponse.json({})
+    return HttpResponse.json({ message: 'User create success' })
   })
 )
 
@@ -130,6 +130,15 @@ describe('Sign Up', () => {
         const { user, elements: { button } } = await setup()
         await user.click(button)
         expect(screen.getByRole('status')).toBeInTheDocument()
+      })
+    })
+
+    describe('when success response is received', () => {
+      it('display message received from backend', async () => {
+        const { user, elements: { button } } = await setup()
+        await user.click(button)
+        const text = await screen.findByText('User create success')
+        expect(text).toBeInTheDocument()
       })
     })
   })

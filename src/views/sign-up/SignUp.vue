@@ -37,6 +37,10 @@
         </div>
       </div>
     </form>
+
+    <div class="alert alert-success" v-if="successMessage">
+      {{ successMessage }}
+    </div>
   </div>
 </template>
 
@@ -51,11 +55,13 @@ const formState = reactive({
 })
 
 const apiProgress = ref(false)
+const successMessage = ref()
 
-const submit = () => {
+const submit = async () => {
   apiProgress.value = true
   const { passwordConfirm, ...body } = formState
-  axios.post('/api/v1/users', body)
+  const response = await axios.post('/api/v1/users', body)
+  successMessage.value = response.data.message
   //---> Just work with SignUp.spec.js
   // fetch(window.location.origin + '/api/v1/users', {
   //   method: 'POST',
