@@ -1,6 +1,6 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-    <form class="card" @submit.prevent="submit">
+    <form class="card" @submit.prevent="submit" data-testid="form-sign-up" v-if="!successMessage">
       <div class="card-header text-center">
         <h1>Sign Up</h1>
       </div>
@@ -38,7 +38,7 @@
       </div>
     </form>
 
-    <div class="alert alert-success" v-if="successMessage">
+    <div class="alert alert-success" v-else>
       {{ successMessage }}
     </div>
   </div>
