@@ -29,6 +29,7 @@
             v-model="formState.passwordConfirm"
           />
         </div>
+        <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabled || apiProgress">
             <span role="status" class="spinner-border spinner-border-sm" v-if="apiProgress"></span>
@@ -56,12 +57,20 @@ const formState = reactive({
 
 const apiProgress = ref(false)
 const successMessage = ref()
+const errorMessage = ref()
 
 const submit = async () => {
   apiProgress.value = true
+  errorMessage.value = ''
   const { passwordConfirm, ...body } = formState
-  const response = await axios.post('/api/v1/users', body)
-  successMessage.value = response.data.message
+  try {
+    const response = await axios.post('/api/v1/users', body)
+    successMessage.value = response.data.message
+  } catch (err) {
+    errorMessage.value = 'Unexpected error occurred, please try again'
+  } finally {
+    apiProgress.value = false
+  }
   //---> Just work with SignUp.spec.js
   // fetch(window.location.origin + '/api/v1/users', {
   //   method: 'POST',

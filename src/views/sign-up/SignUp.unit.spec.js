@@ -34,7 +34,10 @@ describe('Sign Up', () => {
     describe('when user submit form', () => {
       it('sends username, email, password to backend', async () => {
         axios.post.mockResolvedValue({ data: {} })
-        const { user, elements: { button } } = await setup()
+        const {
+          user,
+          elements: { button }
+        } = await setup()
         await user.click(button)
         expect(axios.post).toHaveBeenCalledWith('/api/v1/users', {
           username: 'user1',
@@ -45,8 +48,13 @@ describe('Sign Up', () => {
 
       describe('when there is an ongoing api call', () => {
         it('does not allow clicking the button', async () => {
-          axios.post.mockResolvedValue({ data: {} })
-          const { user, elements: { button } } = await setup()
+          axios.post.mockImplementation(
+            () => new Promise((resolve) => setTimeout(() => resolve({ data: {} }), 1000))
+          )
+          const {
+            user,
+            elements: { button }
+          } = await setup()
           await user.click(button)
           await user.click(button)
           expect(axios.post).toHaveBeenCalledTimes(1)

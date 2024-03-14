@@ -99,14 +99,19 @@ describe('Sign Up', () => {
 
   describe('when user set same value for password inputs', () => {
     it('enable button', async () => {
-      const { elements: { button } } = await setup()
+      const {
+        elements: { button }
+      } = await setup()
       expect(button).toBeEnabled()
     })
   })
 
   describe('when user submit form', () => {
     it('sends username, email, password to backend', async () => {
-      const { user, elements: { button } } = await setup()
+      const {
+        user,
+        elements: { button }
+      } = await setup()
       await user.click(button)
       await waitFor(() => {
         expect(requestBody).toEqual({
@@ -119,7 +124,10 @@ describe('Sign Up', () => {
 
     describe('when there is an ongoing api call', () => {
       it('does not allow clicking the button', async () => {
-        const { user, elements: { button } } = await setup()
+        const {
+          user,
+          elements: { button }
+        } = await setup()
         await user.click(button)
         await user.click(button)
         await waitFor(() => {
@@ -134,7 +142,10 @@ describe('Sign Up', () => {
             return HttpResponse.json({})
           })
         )
-        const { user, elements: { button } } = await setup()
+        const {
+          user,
+          elements: { button }
+        } = await setup()
         await user.click(button)
         expect(screen.getByRole('status')).toBeInTheDocument()
       })
@@ -142,14 +153,20 @@ describe('Sign Up', () => {
 
     describe('when success response is received', () => {
       it('display message received from backend', async () => {
-        const { user, elements: { button } } = await setup()
+        const {
+          user,
+          elements: { button }
+        } = await setup()
         await user.click(button)
         const text = await screen.findByText('User create success')
         expect(text).toBeInTheDocument()
       })
 
       it('hide sign up form', async () => {
-        const { user, elements: { button } } = await setup()
+        const {
+          user,
+          elements: { button }
+        } = await setup()
         const form = screen.getByTestId('form-sign-up')
         await user.click(button)
         await waitFor(() => {
@@ -157,6 +174,64 @@ describe('Sign Up', () => {
         })
       })
     })
-  })
 
+    describe('when network failure occurs', () => {
+      it('display generic message', async () => {
+        server.use(
+          http.post('/api/v1/users', async () => {
+            return HttpResponse.error()
+          })
+        )
+        const {
+          user,
+          elements: { button }
+        } = await setup()
+        await user.click(button)
+        const text = await screen.findByText('Unexpected error occurred, please try again')
+        expect(text).toBeInTheDocument()
+      })
+
+      it('hide spinner', async () => {
+        server.use(
+          http.post('/api/v1/users', async () => {
+            return HttpResponse.error()
+          })
+        )
+        const {
+          user,
+          elements: { button }
+        } = await setup()
+        await user.click(button)
+        await waitFor(() => {
+          expect(screen.queryByRole('status')).not.toBeInTheDocument()
+        })
+      })
+
+      describe('when user submit again', () => {
+        it('hide error when api request is progress', async () => {
+          let processedFirstRequest = false
+          server.use(
+            http.post('/api/v1/users', async () => {
+              if (!processedFirstRequest) {
+                processedFirstRequest = true
+                return HttpResponse.error()
+              } else {
+                return HttpResponse.json({})
+              }
+            })
+          )
+          const {
+            user,
+            elements: { button }
+          } = await setup()
+          await user.click(button)
+          const text = await screen.findByText('Unexpected error occurred, please try again')
+          await user.click(button)
+          await waitFor(() => {
+            expect(text).not.toBeInTheDocument()
+          })
+        })
+      })
+    })
+  })
 })
