@@ -3,6 +3,7 @@ import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { HttpResponse, http, delay } from 'msw'
+import { it } from 'vitest'
 
 let requestBody
 let counter = 0
@@ -231,6 +232,30 @@ describe('Sign Up', () => {
             expect(text).not.toBeInTheDocument()
           })
         })
+      })
+    })
+
+    describe('when username is invalid', () => {
+      it('display validation error', async () => {
+        server.use(
+          http.post('/api/v1/users', async () => {
+            return HttpResponse.json(
+              {
+                validationErrors: {
+                  username: 'Username cannot be null'
+                }
+              },
+              { status: 400 }
+            )
+          })
+        )
+        const {
+          user,
+          elements: { button }
+        } = await setup()
+        await user.click(button)
+        const error = await screen.findByText('Username cannot be null')
+        expect(error).toBeInTheDocument()
       })
     })
   })

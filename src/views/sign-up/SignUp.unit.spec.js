@@ -141,6 +141,29 @@ describe('Sign Up', () => {
           })
         })
       })
+
+      describe('when username is invalid', () => {
+        it('display validation error', async () => {
+          axios.post.mockRejectedValue({
+            response: {
+              status: 400,
+              data: {
+                validationErrors: {
+                  username: 'Username cannot be null'
+                }
+              }
+            }
+          })
+
+          const {
+            user,
+            elements: { button }
+          } = await setup()
+          await user.click(button)
+          const error = await screen.findByText('Username cannot be null')
+          expect(error).toBeInTheDocument()
+        })
+      })
     })
   })
 })
