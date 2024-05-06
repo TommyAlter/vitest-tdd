@@ -5,11 +5,12 @@
         <h1>Sign Up</h1>
       </div>
       <div class="card-body">
-        <div class="mb-3">
-          <label class="form-label" for="username">Username</label>
-          <input class="form-control" id="username" v-model="formState.username" />
-          <div>{{ errors.username }}</div>
-        </div>
+        <AppInput
+          id="username"
+          label="Username"
+          :help="errors.username"
+          v-model="formState.username"
+        />
 
         <div class="mb-3">
           <label class="form-label" for="email">Email</label>
@@ -49,6 +50,7 @@
 <script setup>
 import axios from 'axios'
 import { ref, reactive, computed } from 'vue'
+import { AppInput } from '@/components'
 const formState = reactive({
   username: '',
   email: '',
