@@ -40,7 +40,9 @@ const setup = async () => {
     ...result,
     user,
     elements: {
-      button
+      button,
+      passwordInput,
+      passwordConfirmInput
     }
   }
 }
@@ -96,6 +98,18 @@ describe('Sign Up', () => {
   it('does not display spinner', () => {
     render(SignUp)
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  describe('when password do not match', () => {
+    it('display error', async () => {
+      const {
+        user,
+        elements: { passwordInput, passwordConfirmInput }
+      } = await setup()
+      await user.type(passwordInput, '123')
+      await user.type(passwordConfirmInput, '456')
+      expect(screen.getByText('Password mismatch')).toBeInTheDocument()
+    })
   })
 
   describe('when user set same value for password inputs', () => {

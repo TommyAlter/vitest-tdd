@@ -22,15 +22,14 @@
           type="password"
         />
 
-        <div class="mb-3">
-          <label class="form-label" for="password-confirm">Password Confirmation</label>
-          <input
-            class="form-control"
-            id="password-confirm"
-            type="password"
-            v-model="formState.passwordConfirm"
-          />
-        </div>
+        <AppInput
+          id="password-confirm"
+          label="Password Confirmation"
+          :help="passwordMismatchError"
+          v-model="formState.passwordConfirm"
+          type="password"
+        />
+
         <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabled || apiProgress">
@@ -94,4 +93,7 @@ const isDisabled = computed(() =>
     ? formState.password !== formState.passwordConfirm
     : true
 )
+const passwordMismatchError = computed(() => {
+  return formState.password !== formState.passwordConfirm ? 'Password mismatch' : undefined
+})
 </script>
