@@ -12,15 +12,15 @@
           v-model="formState.username"
         />
 
-        <div class="mb-3">
-          <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" v-model="formState.email" />
-        </div>
+        <AppInput id="email" label="Email" :help="errors.email" v-model="formState.email" />
 
-        <div class="mb-3">
-          <label class="form-label" for="password">Password</label>
-          <input class="form-control" id="password" type="password" v-model="formState.password" />
-        </div>
+        <AppInput
+          id="password"
+          label="Password"
+          :help="errors.password"
+          v-model="formState.password"
+          type="password"
+        />
 
         <div class="mb-3">
           <label class="form-label" for="password-confirm">Password Confirmation</label>
