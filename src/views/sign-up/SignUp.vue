@@ -48,7 +48,7 @@
 
 <script setup>
 import axios from 'axios'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { AppInput } from '@/components'
 const formState = reactive({
   username: '',
@@ -96,4 +96,25 @@ const isDisabled = computed(() =>
 const passwordMismatchError = computed(() => {
   return formState.password !== formState.passwordConfirm ? 'Password mismatch' : undefined
 })
+
+watch(
+  () => formState.username,
+  () => {
+    delete errors.value.username
+  }
+)
+
+watch(
+  () => formState.email,
+  () => {
+    delete errors.value.email
+  }
+)
+
+watch(
+  () => formState.password,
+  () => {
+    delete errors.value.password
+  }
+)
 </script>
