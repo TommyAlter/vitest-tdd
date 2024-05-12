@@ -1,0 +1,9 @@
+{
+  "signUp": "Dang Ky",
+  "username": "Nguoi dung",
+  "email": "Email",
+  "password": "Mat khau",
+  "passwordConfirm": "Xac nhan mat khau",
+  "passwordMismatch": "Mat khau khong khop",
+  "genericError": "Loi khong mong doi, xin thu lai"
+}
