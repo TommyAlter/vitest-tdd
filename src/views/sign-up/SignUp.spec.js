@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from 'test/helper'
 import SignUp from './SignUp.vue'
-import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { HttpResponse, http, delay } from 'msw'
 import { describe, it } from 'vitest'
@@ -25,8 +24,7 @@ beforeAll(() => server.listen())
 afterAll(() => server.close())
 
 const setup = async () => {
-  const user = userEvent.setup()
-  const result = render(SignUp)
+  const { user, result } = render(SignUp)
   const usernameInput = screen.getByLabelText('Username')
   const emailInput = screen.getByLabelText('Email')
   const passwordInput = screen.getByLabelText('Password')
