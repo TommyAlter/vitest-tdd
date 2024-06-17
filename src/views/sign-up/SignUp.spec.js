@@ -2,7 +2,8 @@ import { render, screen, waitFor } from 'test/helper'
 import SignUp from './SignUp.vue'
 import { setupServer } from 'msw/node'
 import { HttpResponse, http, delay } from 'msw'
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { i18n } from '@/locales'
 
 let requestBody
 let counter = 0
@@ -136,6 +137,32 @@ describe('Sign Up', () => {
         })
       })
     })
+
+    describe.each([{ language: 'vi' }, { language: 'en' }])(
+      'when language is $language',
+      ({ language }) => {
+        it('sends expected language in accept language header', async () => {
+          let acceptLanguage
+          server.use(
+            http.post('/api/v1/users', async ({ request }) => {
+              acceptLanguage = request.headers.get('Accept-Language')
+              await delay('infinite')
+              return HttpResponse.json({})
+            })
+          )
+
+          const {
+            user,
+            elements: { button }
+          } = await setup()
+          i18n.global.locale = language
+          await user.click(button)
+          await waitFor(() => {
+            expect(acceptLanguage).toBe(language)
+          })
+        })
+      }
+    )
 
     describe('when there is an ongoing api call', () => {
       it('does not allow clicking the button', async () => {
