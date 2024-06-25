@@ -1,17 +1,14 @@
-vi.mock('axios')
+vi.mock('./api')
 vi.mock('vue-i18n')
 import { render, screen, waitFor } from '@testing-library/vue'
 import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
-import axios from 'axios'
 import en from '@/locales/translations/en.json'
 import { useI18n } from 'vue-i18n'
+import { signUp } from './api'
 
 vi.mocked(useI18n).mockReturnValue({
-  t: (key) => en[key],
-  locale: {
-    value: 'ab'
-  }
+  t: (key) => en[key]
 })
 
 beforeEach(() => {
@@ -23,10 +20,7 @@ const setup = async () => {
   const result = render(SignUp, {
     global: {
       mocks: {
-        $t: (key) => en[key],
-        $i18n: {
-          locale: 'ab'
-        }
+        $t: (key) => en[key]
       }
     }
   })
@@ -55,30 +49,22 @@ describe('Sign Up', () => {
   describe('when user set same value for password inputs', () => {
     describe('when user submit form', () => {
       it('sends username, email, password to backend', async () => {
-        axios.post.mockResolvedValue({ data: {} })
+        signUp.mockResolvedValue({ data: {} })
         const {
           user,
           elements: { button }
         } = await setup()
         await user.click(button)
-        expect(axios.post).toHaveBeenCalledWith(
-          '/api/v1/users',
-          {
-            username: 'user1',
-            email: 'user1@mail.com',
-            password: 'P4ssword'
-          },
-          {
-            headers: {
-              'Accept-Language': 'ab'
-            }
-          }
-        )
+        expect(signUp).toHaveBeenCalledWith({
+          username: 'user1',
+          email: 'user1@mail.com',
+          password: 'P4ssword'
+        })
       })
 
       describe('when there is an ongoing api call', () => {
         it('does not allow clicking the button', async () => {
-          axios.post.mockImplementation(
+          signUp.mockImplementation(
             () => new Promise((resolve) => setTimeout(() => resolve({ data: {} }), 1000))
           )
           const {
@@ -87,11 +73,11 @@ describe('Sign Up', () => {
           } = await setup()
           await user.click(button)
           await user.click(button)
-          expect(axios.post).toHaveBeenCalledTimes(1)
+          expect(signUp).toHaveBeenCalledTimes(1)
         })
 
         it('display spinner', async () => {
-          axios.post.mockImplementation(
+          signUp.mockImplementation(
             () => new Promise((resolve) => setTimeout(() => resolve({ data: {} }), 1000))
           )
           const {
@@ -105,7 +91,7 @@ describe('Sign Up', () => {
 
       describe('when success response is received', () => {
         beforeEach(() => {
-          axios.post.mockResolvedValue({ data: { message: 'User create success' } })
+          signUp.mockResolvedValue({ data: { message: 'User create success' } })
         })
         it('display message received from backend', async () => {
           const {
@@ -132,7 +118,7 @@ describe('Sign Up', () => {
 
       describe('when network failure occurs', () => {
         beforeEach(() => {
-          axios.post.mockRejectedValue({})
+          signUp.mockRejectedValue({})
         })
         it('display generic message', async () => {
           const {
@@ -157,7 +143,7 @@ describe('Sign Up', () => {
 
         describe('when user submit again', () => {
           it('hide error when api request is progress', async () => {
-            axios.post.mockRejectedValueOnce({}).mockResolvedValue({ data: {} })
+            signUp.mockRejectedValueOnce({}).mockResolvedValue({ data: {} })
             const {
               user,
               elements: { button }
@@ -178,7 +164,7 @@ describe('Sign Up', () => {
         { field: 'password', message: 'Password cannot be null' }
       ])('when $field is invalid', ({ field, message }) => {
         it(`display ${message}`, async () => {
-          axios.post.mockRejectedValue({
+          signUp.mockRejectedValue({
             response: {
               status: 400,
               data: {
@@ -199,7 +185,7 @@ describe('Sign Up', () => {
         })
 
         it(`clear error after user updates ${field}`, async () => {
-          axios.post.mockRejectedValue({
+          signUp.mockRejectedValue({
             response: {
               status: 400,
               data: {
