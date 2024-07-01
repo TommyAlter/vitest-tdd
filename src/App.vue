@@ -1,11 +1,10 @@
 <script setup>
-import { LanguageSelector } from './components'
+import { LanguageSelector, NavBar } from './components'
 </script>
 
 <template>
-  <main class="container">
-    <router-link data-testid="link-home-page" to="/">Home</router-link>
-    <router-link data-testid="link-signup-page" to="/signup">{{ $t('signUp') }}</router-link>
+  <NavBar />
+  <main class="container mt-3">
     <LanguageSelector />
     <router-view />
   </main>
