@@ -5,7 +5,7 @@ import { LanguageSelector, NavBar } from './components'
 <template>
   <NavBar />
   <main class="container mt-3">
-    <LanguageSelector />
     <router-view />
+    <LanguageSelector />
   </main>
 </template>

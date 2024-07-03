@@ -30,29 +30,26 @@
           type="password"
         />
 
-        <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
+        <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabled || apiProgress">
-            <span role="status" class="spinner-border spinner-border-sm" v-if="apiProgress"></span>
+            <Spinner v-if="apiProgress" />
             {{ $t('signUp') }}
           </button>
         </div>
       </div>
     </form>
 
-    <div class="alert alert-success" v-else>
-      {{ successMessage }}
-    </div>
+    <Alert v-else>{{ successMessage }}</Alert>
   </div>
 </template>
 
 <script setup>
-import axios from 'axios'
 import { ref, reactive, computed, watch } from 'vue'
-import { AppInput } from '@/components'
+import { Alert, AppInput, Spinner } from '@/components'
 import { useI18n } from 'vue-i18n'
 import { signUp } from './api'
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const formState = reactive({
   username: '',
   email: '',
