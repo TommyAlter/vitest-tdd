@@ -8,11 +8,11 @@
   </div>
 </template>
 <script setup>
-import axios from 'axios'
 import { ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { Spinner, Alert } from '@/components'
+import { activate } from './api'
 const { t } = useI18n()
 const route = useRoute()
 const errorMessage = ref()
@@ -21,7 +21,7 @@ const status = ref('')
 watchEffect(async () => {
   status.value = 'loading'
   try {
-    const response = await axios.patch(`/api/v1/users/${route.params.token}/active`)
+    const response = await activate(route.params.token)
     successMessage.value = response.data.message
     status.value = 'success'
   } catch (apiError) {

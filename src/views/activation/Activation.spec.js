@@ -3,6 +3,7 @@ import { setupServer } from 'msw/node'
 import { HttpResponse, http } from 'msw'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import Activation from './Activation.vue'
+import { i18n } from '@/locales'
 
 let counter = 0
 let token
@@ -137,4 +138,25 @@ describe('Activation', () => {
       expect(spinner).not.toBeInTheDocument()
     })
   })
+
+  describe.each([{ language: 'vi' }, { language: 'en' }])(
+    'when language is $language',
+    ({ language }) => {
+      it('send expected language in accept language header', async () => {
+        i18n.global.locale = language
+        let acceptLanguage
+        server.use(
+          http.patch('/api/v1/users/:token/active', async ({ request }) => {
+            acceptLanguage = request.headers.get('Accept-Language')
+            await delay('infinite')
+            return HttpResponse.json({})
+          })
+        )
+        await setup('/activation/123')
+        await waitFor(() => {
+          expect(acceptLanguage).toBe(language)
+        })
+      })
+    }
+  )
 })
