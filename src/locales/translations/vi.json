@@ -7,6 +7,7 @@
   "passwordMismatch": "Mat khau khong khop",
   "genericError": "Loi khong mong doi, xin thu lai",
   "passwordReset": {
-    "request": "Reset mat khau"
+    "request": "Reset mat khau",
+    "set": "Cai mat khau"
   }
 }
