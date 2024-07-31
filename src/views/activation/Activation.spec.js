@@ -1,7 +1,6 @@
 import { render, waitFor, router, screen } from 'test/helper'
 import { setupServer } from 'msw/node'
-import { HttpResponse, http } from 'msw'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { HttpResponse, delay, http } from 'msw'
 import Activation from './Activation.vue'
 import { i18n } from '@/locales'
 
