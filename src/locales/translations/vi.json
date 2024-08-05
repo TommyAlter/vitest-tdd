@@ -9,5 +9,10 @@
   "passwordReset": {
     "request": "Reset mat khau",
     "set": "Cai mat khau"
+  },
+  "userList": {
+    "header": "Users",
+    "next": "Tiep",
+    "previous": "Truoc"
   }
 }
