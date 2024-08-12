@@ -1,42 +1,49 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2" data-testid="signup-page">
-    <form class="card" @submit.prevent="submit" data-testid="form-sign-up" v-if="!successMessage">
-      <div class="card-header text-center">
-        <h1>{{ $t('signUp') }}</h1>
-      </div>
-      <div class="card-body">
-        <AppInput
-          id="username"
-          :label="$t('username')"
-          :help="errors.username"
-          v-model="formState.username"
-        />
+    <form @submit.prevent="submit" data-testid="form-sign-up" v-if="!successMessage">
+      <Card>
+        <template v-slot:header>
+          <h1>{{ $t('signUp') }}</h1>
+        </template>
+        <template v-slot:body>
+          <AppInput
+            id="username"
+            :label="$t('username')"
+            :help="errors.username"
+            v-model="formState.username"
+          />
 
-        <AppInput id="email" :label="$t('email')" :help="errors.email" v-model="formState.email" />
+          <AppInput
+            id="email"
+            :label="$t('email')"
+            :help="errors.email"
+            v-model="formState.email"
+          />
 
-        <AppInput
-          id="password"
-          :label="$t('password')"
-          :help="errors.password"
-          v-model="formState.password"
-          type="password"
-        />
+          <AppInput
+            id="password"
+            :label="$t('password')"
+            :help="errors.password"
+            v-model="formState.password"
+            type="password"
+          />
 
-        <AppInput
-          id="password-confirm"
-          :label="$t('passwordConfirm')"
-          :help="passwordMismatchError"
-          v-model="formState.passwordConfirm"
-          type="password"
-        />
+          <AppInput
+            id="password-confirm"
+            :label="$t('passwordConfirm')"
+            :help="passwordMismatchError"
+            v-model="formState.passwordConfirm"
+            type="password"
+          />
 
-        <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
-        <div class="text-center">
-          <AppButton :is-disabled="isDisabled" :api-progress="apiProgress">
-            {{ $t('signUp') }}
-          </AppButton>
-        </div>
-      </div>
+          <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
+          <div class="text-center">
+            <AppButton :is-disabled="isDisabled" :api-progress="apiProgress">
+              {{ $t('signUp') }}
+            </AppButton>
+          </div>
+        </template>
+      </Card>
     </form>
 
     <Alert v-else>{{ successMessage }}</Alert>
@@ -45,7 +52,7 @@
 
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
-import { Alert, AppInput, AppButton } from '@/components'
+import { Alert, AppInput, AppButton, Card } from '@/components'
 import { useI18n } from 'vue-i18n'
 import { signUp } from './api'
 const { t } = useI18n()
