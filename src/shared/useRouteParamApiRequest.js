@@ -6,7 +6,7 @@ export default function useRouteParamApiRequest(apiFn, routeVariable) {
   const { t } = useI18n()
   const route = useRoute()
 
-  const error = ref('')
+  const error = ref()
   const status = ref()
   const data = ref()
 
