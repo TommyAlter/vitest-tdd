@@ -3,7 +3,6 @@ import Login from './Login.vue'
 import { setupServer } from 'msw/node'
 import { delay, http, HttpResponse } from 'msw'
 import { i18n } from '@/locales'
-import { expect, it } from 'vitest'
 
 let requestBody,
   counter = 0
