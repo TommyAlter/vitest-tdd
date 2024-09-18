@@ -8,7 +8,8 @@
   "genericError": "Loi khong mong doi, xin thu lai",
   "passwordReset": {
     "request": "Reset mat khau",
-    "set": "Cai mat khau"
+    "set": "Cai mat khau",
+    "forgot": "Quen mat khau?"
   },
   "userList": {
     "header": "Users",

@@ -2,7 +2,6 @@ vi.mock('@/views/activation/Activation.vue')
 vi.mock('@/views/home/components//UserList.vue')
 import { render, router, screen, waitFor } from 'test/helper'
 import App from './App.vue'
-import { expect } from 'vitest'
 
 const setup = async (path) => {
   router.push(path)
@@ -54,6 +53,19 @@ describe('Routing', () => {
         await user.click(link)
         await waitFor(() => {
           expect(screen.queryByTestId('user-page')).toBeInTheDocument()
+        })
+      })
+    })
+  })
+
+  describe('when user is at login page', () => {
+    describe('when user clicks forgot password link', () => {
+      it('displays password reset request page', async () => {
+        const { user } = await setup('/login')
+        const link = await screen.findByText('Forgot password?')
+        await user.click(link)
+        await waitFor(() => {
+          expect(screen.queryByTestId('password-reset-request-page')).toBeInTheDocument()
         })
       })
     })
