@@ -4,6 +4,7 @@ import { render, router, screen, waitFor } from 'test/helper'
 import App from './App.vue'
 import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
+import { describe, expect } from 'vitest'
 
 const server = setupServer(
   http.post('/api/v1/auth', () => {
@@ -120,6 +121,23 @@ describe('Routing', () => {
         await screen.findByTestId('user-page')
         expect(router.currentRoute.value.path).toBe('/user/1')
       })
+    })
+
+    it('stores logged in state in local storage', async () => {
+      await setupLoggedIn()
+      const state = JSON.parse(localStorage.getItem('auth'))
+      expect(state.id).toBe(1)
+      expect(state.username).toBe('user1')
+    })
+  })
+
+  describe('when local storage has auth data', () => {
+    it('displays logged in layout', async () => {
+      localStorage.setItem('auth', JSON.stringify({ id: 1, username: 'user1', email: 'user1@mail.com' }))
+      await setup('/')
+      expect(screen.queryByTestId('link-signup-page')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('link-login-page')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('link-my-profile')).toBeInTheDocument()
     })
   })
 })
