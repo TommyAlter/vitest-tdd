@@ -40,14 +40,13 @@ import { ref, computed, reactive, watch } from 'vue'
 import { login } from './api'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 const { t } = useI18n()
+const { setLoggedIn } = useAuthStore()
 
 const router = useRouter()
 
-const formState = reactive({
-  email: '',
-  password: ''
-})
+const formState = reactive({ email: '', password: '' })
 const apiProgress = ref(false)
 const errorMessage = ref()
 const errors = ref({})
@@ -56,7 +55,8 @@ const submit = async () => {
   apiProgress.value = true
   errorMessage.value = undefined
   try {
-    await login(formState)
+    const response = await login(formState)
+    setLoggedIn(response.data)
     router.push('/')
   } catch (apiError) {
     if (apiError.response?.status === 400) {
