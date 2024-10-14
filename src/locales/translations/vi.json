@@ -16,5 +16,6 @@
     "next": "Tiep",
     "previous": "Truoc"
   },
-  "login": "Dang nhap"
+  "login": "Dang nhap",
+  "logout": "Dang xuat"
 }

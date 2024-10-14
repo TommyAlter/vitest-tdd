@@ -17,16 +17,31 @@
             }}</router-link>
           </li>
         </template>
-        <li class="nav-item" v-if="auth.id">
-          <router-link class="nav-link" data-testid="link-my-profile" :to="`/user/${auth.id}`"
-            >My Profile</router-link
-          >
-        </li>
+        <template v-else>
+          <li class="nav-item">
+            <router-link class="nav-link" data-testid="link-my-profile" :to="`/user/${auth.id}`"
+              >My Profile</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <span class="nav-link" data-testid="link-logout" role="button" @click="logout">
+              {{ $t('logout') }}
+            </span>
+          </li>
+        </template>
       </ul>
     </div>
   </nav>
 </template>
 <script setup>
+import http from '@/lib/http'
 import { useAuthStore } from '@/stores/auth'
-const { auth } = useAuthStore()
+const { auth, logout: logoutStore } = useAuthStore()
+
+const logout = () => {
+  logoutStore()
+  try {
+    http.post('/api/v1/logout')
+  } catch {}
+}
 </script>
