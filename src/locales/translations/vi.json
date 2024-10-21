@@ -17,5 +17,9 @@
     "previous": "Truoc"
   },
   "login": "Dang nhap",
-  "logout": "Dang xuat"
+  "logout": "Dang xuat",
+  "deleteUser": {
+    "button": "Delete",
+    "confirm": "Ban chac chu?"
+  }
 }
