@@ -19,9 +19,15 @@
         </template>
         <template v-else>
           <li class="nav-item">
-            <router-link class="nav-link" data-testid="link-my-profile" :to="`/user/${auth.id}`"
-              >My Profile</router-link
-            >
+            <router-link class="nav-link" data-testid="link-my-profile" :to="`/user/${auth.id}`">
+              <img
+                src="@/assets/profile.png"
+                :alt="`${auth.username} profile`"
+                width="30"
+                class="rounded-circle shadow-sm"
+              />
+              {{ auth.username }}
+            </router-link>
           </li>
           <li class="nav-item">
             <span class="nav-link" data-testid="link-logout" role="button" @click="logout">
