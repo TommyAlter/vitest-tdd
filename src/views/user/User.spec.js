@@ -265,6 +265,52 @@ describe('User page', () => {
           expect(screen.queryByRole('button', { name: 'Cancel' })).toBeInTheDocument()
         })
 
+        it('displays file upload input', async () => {
+          const {
+            user,
+            elements: { editButton }
+          } = await setupPageLoaded()
+          await user.click(editButton)
+          const fileUploadInput = screen.getByLabelText('Select Image')
+          expect(fileUploadInput).toHaveAttribute('type', 'file')
+        })
+
+        describe('when user select photo', () => {
+          it('displays in existing profile image', async () => {
+            const {
+              user,
+              elements: { editButton }
+            } = await setupPageLoaded()
+            await user.click(editButton)
+            const fileUploadInput = screen.getByLabelText('Select Image')
+            user.upload(fileUploadInput, new File(['hello'], 'hello.png', { type: 'image/png' }))
+            const image = screen.getByAltText('user3 profile')
+            await waitFor(() => {
+              expect(image).toHaveAttribute('src', 'data:image/png;base64,aGVsbG8=')
+            })
+          })
+
+          describe('when user click cancel', () => {
+            it('displays default image', async () => {
+              const {
+                user,
+                elements: { editButton }
+              } = await setupPageLoaded()
+              await user.click(editButton)
+              const fileUploadInput = screen.getByLabelText('Select Image')
+              await user.upload(
+                fileUploadInput,
+                new File(['hello'], 'hello.png', { type: 'image/png' })
+              )
+              await user.click(screen.queryByRole('button', { name: 'Cancel' }))
+              const image = screen.getByAltText('user3 profile')
+              await waitFor(() => {
+                expect(image).toHaveAttribute('src', '/assets/profile.png')
+              })
+            })
+          })
+        })
+
         describe('when username is changed', () => {
           describe('when user clicks cancel', () => {
             it('displays initial username', async () => {
