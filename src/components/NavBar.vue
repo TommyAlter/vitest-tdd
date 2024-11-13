@@ -20,11 +20,12 @@
         <template v-else>
           <li class="nav-item">
             <router-link class="nav-link" data-testid="link-my-profile" :to="`/user/${auth.id}`">
-              <img
-                src="@/assets/profile.png"
+              <ProfileImage
                 :alt="`${auth.username} profile`"
                 width="30"
+                height="30"
                 class="rounded-circle shadow-sm"
+                :image="auth.image"
               />
               {{ auth.username }}
             </router-link>
@@ -41,6 +42,7 @@
 </template>
 <script setup>
 import http from '@/lib/http'
+import {  ProfileImage } from './index'
 import { useAuthStore } from '@/stores/auth'
 const { auth, logout: logoutStore } = useAuthStore()
 
